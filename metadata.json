@@ -1,0 +1,7 @@
+{
+  "name": "Investment NAV Dashboard",
+  "description": "หน้า Dashboard สำหรับเลือกและเปรียบเทียบมูลค่าหน่วยลงทุน (NAV) หลายแผน",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

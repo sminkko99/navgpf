@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment NAV Dashboard - FundView</title>
+  <meta name="description" content="หน้า Dashboard สำหรับเลือกและเปรียบเทียบมูลค่าหน่วยลงทุน (NAV) หลายแผน">
+  <meta property="og:title" content="Investment NAV Dashboard - FundView">
+  <meta property="og:description" content="หน้า Dashboard สำหรับเลือกและเปรียบเทียบมูลค่าหน่วยลงทุน (NAV) หลายแผน">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Noto Sans Thai -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       High Density Design Theme - CSS Variables & Global Reset
+       ========================================================================== */
+    :root {
+      --primary: #047857;
+      --primary-hover: #065f46;
+      --primary-light: #e8f7f0;
+      --bg: #f2fbf7;
+      --border: #dbe5e1;
+      --text: #1a2e26;
+      --white: #ffffff;
+      --text-muted: #64748b;
+      --val-up: #059669;
+      --val-down: #dc2626;
+      --val-neutral: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans Thai', 'Tahoma', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       Navbar - High Density
+       ========================================================================== */
+    .navbar {
+      height: 56px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo, .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 20px;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    .logo svg, .brand-logo svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-links, .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 14px;
+      color: var(--text-muted);
+      list-style: none;
+    }
+
+    .nav-item, .nav-link {
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+      padding: 4px 0;
+    }
+
+    .nav-item:hover, .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .nav-item.active, .nav-link.active {
+      color: var(--primary);
+      font-weight: 600;
+      background: transparent;
+    }
+
+    .btn-account {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 6px 16px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-account:hover {
+      background-color: #d1fae5;
+    }
+
+    /* ==========================================================================
+       Main Layout Container
+       ========================================================================== */
+    .main-content, .app-container {
+      padding: 16px 24px 28px 24px;
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ==========================================================================
+       Header Section
+       ========================================================================== */
+    .header-section, .page-header {
+      flex-shrink: 0;
+      padding: 4px 0 2px 0;
+    }
+
+    .badge, .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--primary);
+      color: var(--white);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1, .page-title {
+      font-size: 24px;
+      color: var(--text);
+      margin-bottom: 4px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+    }
+
+    .subtitle, .page-description {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       Card Component - High Density
+       ========================================================================== */
+    .card, .dashboard-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 2px 4px rgba(4, 120, 87, 0.02);
+      padding: 16px;
+    }
+
+    .section-title, .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-title h2, .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .card-meta-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-meta-highlight {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .plan-selector-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-action-text {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-action-text:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    /* ==========================================================================
+       Plan Grid - 6 Columns High Density
+       ========================================================================== */
+    .plan-grid, .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+
+    .plan-chip, .plan-chip-label {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: 99px;
+      font-size: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+      user-select: none;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .plan-chip:hover, .plan-chip-label:hover {
+      border-color: #94a3b8;
+      background-color: #f8fafc;
+    }
+
+    .plan-chip.active, .plan-chip-label.selected {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .plan-chip-checkbox {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .plan-color-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .plan-chip-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .plan-check-icon {
+      width: 14px;
+      height: 14px;
+      stroke: var(--primary);
+      stroke-width: 2.5;
+      fill: none;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .plan-chip-label.selected .plan-check-icon {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ==========================================================================
+       Filter Row - High Density
+       ========================================================================== */
+    .filter-row, .filter-form {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .filter-group, .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 135px;
+    }
+
+    .filter-group label, .form-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .filter-input, .form-control {
+      width: 100%;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      background: var(--white);
+      height: 36px;
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.15s ease;
+    }
+
+    .filter-input:focus, .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(4, 120, 87, 0.12);
+    }
+
+    .btn-submit {
+      background: var(--primary);
+      color: var(--white);
+      padding: 7px 20px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* ==========================================================================
+       Dashboard Split Grid - Side-by-Side Chart & Table
+       ========================================================================== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .chart-area {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-container-wrap {
+      position: relative;
+      width: 100%;
+      height: 330px;
+      min-height: 280px;
+    }
+
+    .chart-summary-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .chart-empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 280px;
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    .chart-empty-state svg {
+      width: 40px;
+      height: 40px;
+      stroke: #94a3b8;
+      stroke-width: 1.5;
+      fill: none;
+      margin-bottom: 0.75rem;
+    }
+
+    .chart-empty-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.25rem;
+    }
+
+    .chart-empty-desc {
+      font-size: 0.85rem;
+      max-width: 320px;
+    }
+
+    /* ==========================================================================
+       NAV Summary Table - High Density
+       ========================================================================== */
+    .table-area {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-responsive-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 330px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table, .nav-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .data-table th, .nav-table th {
+      text-align: left;
+      padding: 7px 9px;
+      background: #f8fafc;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      color: #64748b;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .data-table th:hover, .nav-table th:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+
+    .th-content {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .th-right {
+      justify-content: flex-end;
+    }
+
+    .sort-indicator {
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    .th-active .sort-indicator {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .data-table td, .nav-table td {
+      padding: 7px 9px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+
+    .data-table tbody tr, .nav-table tbody tr {
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .data-table tbody tr:hover, .nav-table tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .data-table tbody tr.row-selected, .nav-table tbody tr.row-selected {
+      background: var(--primary-light) !important;
+      font-weight: 500;
+    }
+
+    .data-table tbody tr.row-selected td, .nav-table tbody tr.row-selected td {
+      border-bottom-color: #d1fae5;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .plan-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .plan-table-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .val-up, .val-positive {
+      color: var(--val-up);
+      font-weight: 600;
+    }
+
+    .val-down, .val-negative {
+      color: var(--val-down);
+      font-weight: 600;
+    }
+
+    .val-neutral {
+      color: var(--val-neutral);
+    }
+
+    /* ==========================================================================
+       Toast Notification
+       ========================================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      pointer-events: auto;
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 0.65rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.825rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border-left: 4px solid var(--primary);
+    }
+
+    .toast-msg.warning {
+      border-left-color: #f59e0b;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ==========================================================================
+       Footer
+       ========================================================================== */
+    .footer {
+      background-color: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    /* ==========================================================================
+       Responsive Media Queries - High Density Adaptations
+       ========================================================================== */
+    @media (max-width: 1080px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .plan-grid, .plans-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content, .app-container {
+        padding: 12px 16px 24px 16px;
+      }
+
+      .nav-links, .nav-menu {
+        display: none;
+      }
+
+      .plan-grid, .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filter-row, .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-submit {
+        width: 100%;
+      }
+
+      .chart-container-wrap {
+        height: 280px;
+      }
+
+      .section-title, .card-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1) Navbar -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="#" class="brand-logo" id="brandLogo">
+        <svg viewBox="0 0 24 24">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+          <polyline points="16 7 22 7 22 13"></polyline>
+        </svg>
+        <span>FundView</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="#" class="nav-link">หน้าหลัก</a></li>
+        <li><a href="#" class="nav-link">ภาพรวม</a></li>
+        <li><a href="#" class="nav-link active">เปรียบเทียบ NAV</a></li>
+        <li><a href="#" class="nav-link">ช่วยเหลือ</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button type="button" class="btn-account" id="btnAccount">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>บัญชีของฉัน</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-container">
+    <!-- 2) Header Section -->
+    <header class="page-header">
+      <div class="nav-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        </svg>
+        <span>NAV</span>
+      </div>
+      <h1 class="page-title">มูลค่าหน่วยลงทุน</h1>
+      <p class="page-description">เลือกแผนเพื่อเปรียบเทียบผลการเคลื่อนไหวของมูลค่าหน่วยลงทุนในช่วงเวลาที่ต้องการ</p>
+    </header>
+
+    <!-- 3) Card เลือกแผนลงทุน -->
+    <section class="dashboard-card" id="cardPlanSelection">
+      <div class="card-header-row">
+        <div class="card-title-wrap">
+          <h2 class="card-title">เลือกแผนการลงทุน</h2>
+        </div>
+        <div class="plan-selector-actions">
+          <span class="card-meta-text" id="selectedCountText">เลือกแล้ว <span class="card-meta-highlight" id="selectedCountNum">2</span> จาก 12 แผน</span>
+          <button type="button" class="btn-action-text" id="btnSelectAll">เลือกทั้งหมด</button>
+          <button type="button" class="btn-action-text" id="btnClearSelection">ล้าง</button>
+        </div>
+      </div>
+
+      <!-- 12 Checkbox Pills Grid -->
+      <div class="plans-grid" id="plansGrid">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- 4) Card ตัวกรอง -->
+    <section class="dashboard-card" id="cardFilters">
+      <div class="card-header-row">
+        <div class="card-title-wrap">
+          <h2 class="card-title">ตัวกรองการแสดงผล</h2>
+        </div>
+      </div>
+
+      <form class="filter-form" id="filterForm" onsubmit="return false;">
+        <div class="form-group">
+          <label for="startDate" class="form-label">จากวันที่</label>
+          <input type="date" id="startDate" name="startDate" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="endDate" class="form-label">ถึงวันที่</label>
+          <input type="date" id="endDate" name="endDate" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="viewInterval" class="form-label">มุมมอง</label>
+          <select id="viewInterval" name="viewInterval" class="form-control">
+            <option value="daily" selected>รายวัน</option>
+            <option value="weekly">รายสัปดาห์</option>
+            <option value="monthly">รายเดือน</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="comparisonType" class="form-label">การเทียบ</label>
+          <select id="comparisonType" name="comparisonType" class="form-control">
+            <option value="real" selected>มูลค่าต่อหน่วยจริง</option>
+            <option value="base100">ดัชนีฐาน 100</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="button" id="btnApplyFilter" class="btn-submit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>แสดงผล</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Dashboard Grid Container for High Density (Side-by-Side on Desktop) -->
+    <div class="dashboard-grid">
+      <!-- 6) Card กราฟเปรียบเทียบ -->
+      <section class="dashboard-card card chart-area" id="cardChart">
+        <div class="card-header-row section-title">
+          <div class="card-title-wrap">
+            <h2 class="card-title">ผลการเปรียบเทียบ</h2>
+          </div>
+          <div class="chart-summary-badge" id="chartSummaryBadge">
+            <span id="chartSummaryText">2 แผน · 240 จุด · รายวัน · มูลค่าจริง</span>
+          </div>
+        </div>
+
+        <div class="chart-container-wrap">
+          <canvas id="navChart"></canvas>
+          <div class="chart-empty-state" id="chartEmptyState">
+            <svg viewBox="0 0 24 24">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <div class="chart-empty-title">ยังไม่ได้เลือกแผนการลงทุน</div>
+            <div class="chart-empty-desc">กรุณาเลือกแผนการลงทุนอย่างน้อย 1 แผน (สูงสุด 5 แผน) เพื่อเปรียบเทียบผลการเคลื่อนไหวมูลค่าหน่วยลงทุน</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5) Card ตารางสรุป NAV -->
+      <section class="dashboard-card card table-area" id="cardTable">
+        <div class="card-header-row section-title">
+          <div class="card-title-wrap">
+            <h2 class="card-title">มูลค่าหน่วยลงทุนล่าสุด</h2>
+          </div>
+          <span class="card-meta-text">คลิกหัวตารางเพื่อเรียงลำดับ</span>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="nav-table data-table" id="navSummaryTable">
+            <thead>
+              <tr>
+                <th data-sort-key="name">
+                  <div class="th-content">
+                    <span>แผน</span>
+                    <span class="sort-indicator" id="sort_name">▲</span>
+                  </div>
+                </th>
+                <th data-sort-key="latestNav" class="text-right">
+                  <div class="th-content th-right">
+                    <span>NAV ล่าสุด</span>
+                    <span class="sort-indicator" id="sort_latestNav">↕</span>
+                  </div>
+                </th>
+                <th data-sort-key="diffPrevDay" class="text-right">
+                  <div class="th-content th-right">
+                    <span>เทียบวันก่อน</span>
+                    <span class="sort-indicator" id="sort_diffPrevDay">↕</span>
+                  </div>
+                </th>
+                <th data-sort-key="pctPrevDay" class="text-right">
+                  <div class="th-content th-right">
+                    <span>% วันก่อน</span>
+                    <span class="sort-indicator" id="sort_pctPrevDay">↕</span>
+                  </div>
+                </th>
+                <th data-sort-key="pctPrevMonth" class="text-right">
+                  <div class="th-content th-right">
+                    <span>% เดือนก่อน</span>
+                    <span class="sort-indicator" id="sort_pctPrevMonth">↕</span>
+                  </div>
+                </th>
+                <th data-sort-key="pctYTD" class="text-right">
+                  <div class="th-content th-right">
+                    <span>% ต้นปี</span>
+                    <span class="sort-indicator" id="sort_pctYTD">↕</span>
+                  </div>
+                </th>
+                <th data-sort-key="pctSinceInception" class="text-right">
+                  <div class="th-content th-right">
+                    <span>% ตั้งกองทุน</span>
+                    <span class="sort-indicator" id="sort_pctSinceInception">↕</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="navTableBody">
+              <!-- Rendered dynamically by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="app-container" style="padding-bottom: 0;">
+      <p>© FundView - Investment NAV Dashboard. ข้อมูลเพื่อการจำลองและการศึกษาเท่านั้น</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JavaScript Logic & Mock Data
+       ========================================================================== -->
+  <script>
+    /**
+     * Investment NAV Dashboard - Single Page Application
+     * FundView Mock Data Engine and Chart.js Controller
+     */
+
+    // 1. Definition of 12 Investment Plans with distinct branding colors
+    const INVESTMENT_PLANS = [
+      { id: 'debt', name: 'แผนตราสารหนี้', color: '#0d9488', baseNav: 11.20, drift: 0.00015, vol: 0.001 },
+      { id: 'thai_eq', name: 'แผนหุ้นไทย', color: '#2563eb', baseNav: 21.50, drift: 0.00030, vol: 0.012 },
+      { id: 'global_eq', name: 'แผนหุ้นต่างประเทศ', color: '#047857', baseNav: 28.40, drift: 0.00055, vol: 0.014 },
+      { id: 'agg20', name: 'แผนเชิงรุก 20', color: '#0284c7', baseNav: 13.60, drift: 0.00022, vol: 0.0035 },
+      { id: 'agg35', name: 'แผนเชิงรุก 35', color: '#6366f1', baseNav: 15.80, drift: 0.00028, vol: 0.0055 },
+      { id: 'agg65', name: 'แผนเชิงรุก 65', color: '#d97706', baseNav: 22.40, drift: 0.00042, vol: 0.0095 },
+      { id: 'agg75', name: 'แผนเชิงรุก 75', color: '#ea580c', baseNav: 24.80, drift: 0.00048, vol: 0.0115 },
+      { id: 'gold', name: 'แผนทองคำ', color: '#ca8a04', baseNav: 17.50, drift: 0.00035, vol: 0.013 },
+      { id: 'reit', name: 'แผนอสังหาริมทรัพย์', color: '#9333ea', baseNav: 14.80, drift: 0.00025, vol: 0.007 },
+      { id: 'capital_pres', name: 'แผนรักษาเงินต้น', color: '#4b5563', baseNav: 10.40, drift: 0.00010, vol: 0.0005 },
+      { id: 'balanced', name: 'แผนสมดุล', color: '#059669', baseNav: 18.90, drift: 0.00036, vol: 0.0068 },
+      { id: 'sustainable', name: 'แผนยั่งยืน', color: '#e11d48', baseNav: 20.30, drift: 0.00045, vol: 0.0105 }
+    ];
+
+    // Default selected plans as required: “แผนหุ้นต่างประเทศ” and “แผนเชิงรุก 65”
+    let selectedPlanIds = new Set(['global_eq', 'agg65']);
+
+    // Application state
+    let historicalDataByPlan = {}; // planId -> [{ date: 'YYYY-MM-DD', nav: number }, ...]
+    let allDates = []; // Sorted list of unique business dates
+    let chartInstance = null;
+    let currentSortKey = 'latestNav';
+    let currentSortOrder = 'desc'; // 'asc' or 'desc'
+
+    /**
+     * Generate 2-year realistic daily historical NAV series using pseudo-random walk
+     */
+    function generateHistoricalData() {
+      const today = new Date();
+      const totalDays = 730; // 2 years back
+      const rawDates = [];
+
+      // Collect Monday-Friday trading days
+      for (let i = totalDays; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const dayOfWeek = d.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Skip Sat (6) and Sun (0)
+          rawDates.push(d.toISOString().split('T')[0]);
+        }
+      }
+
+      allDates = rawDates;
+
+      // Seeded-like realistic generator for each plan
+      INVESTMENT_PLANS.forEach((plan, planIdx) => {
+        let currentNav = plan.baseNav;
+        const series = [];
+
+        for (let i = 0; i < allDates.length; i++) {
+          const dateStr = allDates[i];
+          // Deterministic pseudo-random variation based on planIdx and day index
+          const sinComponent = Math.sin((i + planIdx * 30) / 18) * 0.006;
+          const cycleComponent = Math.cos((i * 1.5 + planIdx * 45) / 45) * 0.008;
+          const noise = ((Math.sin(i * 997 + planIdx * 331) * 10000) % 1) * plan.vol;
+          
+          const dailyChangePct = plan.drift + sinComponent * plan.vol * 4 + cycleComponent * plan.vol * 2 + noise;
+          currentNav = Math.max(1, currentNav * (1 + dailyChangePct));
+
+          series.push({
+            date: dateStr,
+            nav: parseFloat(currentNav.toFixed(4))
+          });
+        }
+
+        historicalDataByPlan[plan.id] = series;
+      });
+    }
+
+    /**
+     * Compute latest NAV, changes, and returns for each plan
+     */
+    function calculatePlanMetrics() {
+      return INVESTMENT_PLANS.map(plan => {
+        const series = historicalDataByPlan[plan.id];
+        const n = series.length;
+        if (n === 0) return null;
+
+        const latestItem = series[n - 1];
+        const prevDayItem = n > 1 ? series[n - 2] : latestItem;
+        
+        // Approx 22 trading days ago = 1 month
+        const prevMonthIdx = Math.max(0, n - 22);
+        const prevMonthItem = series[prevMonthIdx];
+
+        // Start of current year
+        const currentYear = new Date().getFullYear().toString();
+        const startOfYearItem = series.find(item => item.date.startsWith(currentYear)) || series[0];
+        const inceptionItem = series[0];
+
+        const latestNav = latestItem.nav;
+        const diffPrevDay = latestNav - prevDayItem.nav;
+        const pctPrevDay = ((latestNav - prevDayItem.nav) / prevDayItem.nav) * 100;
+        const pctPrevMonth = ((latestNav - prevMonthItem.nav) / prevMonthItem.nav) * 100;
+        const pctYTD = ((latestNav - startOfYearItem.nav) / startOfYearItem.nav) * 100;
+        const pctSinceInception = ((latestNav - inceptionItem.nav) / inceptionItem.nav) * 100;
+
+        return {
+          id: plan.id,
+          name: plan.name,
+          color: plan.color,
+          latestNav,
+          diffPrevDay,
+          pctPrevDay,
+          pctPrevMonth,
+          pctYTD,
+          pctSinceInception
+        };
+      });
+    }
+
+    /**
+     * Show friendly toast message
+     */
+    function showToast(message, isWarning = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${isWarning ? 'warning' : ''}`;
+      toast.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          ${isWarning 
+            ? '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>' 
+            : '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>'}
+        </svg>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.25s ease';
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
+    }
+
+    /**
+     * Render the 12 plan selection chips/pills
+     */
+    function renderPlanSelector() {
+      const grid = document.getElementById('plansGrid');
+      grid.innerHTML = '';
+
+      INVESTMENT_PLANS.forEach(plan => {
+        const isSelected = selectedPlanIds.has(plan.id);
+
+        const label = document.createElement('label');
+        label.className = `plan-chip-label ${isSelected ? 'selected' : ''}`;
+        label.id = `chip_${plan.id}`;
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'plan-chip-checkbox';
+        input.value = plan.id;
+        input.checked = isSelected;
+
+        input.addEventListener('change', () => {
+          handlePlanToggle(plan.id);
+        });
+
+        label.innerHTML = `
+          <span class="plan-color-dot" style="background-color: ${plan.color};"></span>
+          <span class="plan-chip-name">${plan.name}</span>
+          <svg class="plan-check-icon" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+
+        label.prepend(input);
+        grid.appendChild(label);
+      });
+
+      updateSelectionCountUI();
+    }
+
+    /**
+     * Handle Plan Selection Toggle with max 5 limit
+     */
+    function handlePlanToggle(planId) {
+      if (selectedPlanIds.has(planId)) {
+        selectedPlanIds.delete(planId);
+      } else {
+        if (selectedPlanIds.size >= 5) {
+          showToast('สามารถเลือกเปรียบเทียบได้สูงสุด 5 แผนเท่านั้น', true);
+          // Re-render UI to revert checkbox state
+          renderPlanSelector();
+          return;
+        }
+        selectedPlanIds.add(planId);
+      }
+
+      updateSelectionCountUI();
+      refreshActivePillClasses();
+      renderSummaryTable();
+      updateChart();
+    }
+
+    function updateSelectionCountUI() {
+      const count = selectedPlanIds.size;
+      document.getElementById('selectedCountNum').textContent = count;
+    }
+
+    function refreshActivePillClasses() {
+      INVESTMENT_PLANS.forEach(plan => {
+        const label = document.getElementById(`chip_${plan.id}`);
+        if (!label) return;
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        const isSelected = selectedPlanIds.has(plan.id);
+        checkbox.checked = isSelected;
+        if (isSelected) {
+          label.classList.add('selected');
+        } else {
+          label.classList.remove('selected');
+        }
+      });
+    }
+
+    /**
+     * Format number with signs and colors for table
+     */
+    function formatChangeValue(val, isPercentage = false, decimals = 2) {
+      if (isNaN(val)) return '-';
+      const formatted = Math.abs(val).toFixed(decimals);
+      const suffix = isPercentage ? '%' : '';
+
+      if (val > 0) {
+        return `<span class="val-positive">+${formatted}${suffix}</span>`;
+      } else if (val < 0) {
+        return `<span class="val-negative">-${formatted}${suffix}</span>`;
+      } else {
+        return `<span class="val-neutral">0.${'0'.repeat(decimals)}${suffix}</span>`;
+      }
+    }
+
+    /**
+     * Render the NAV Summary Table with sort capability
+     */
+    function renderSummaryTable() {
+      const metrics = calculatePlanMetrics();
+      const tbody = document.getElementById('navTableBody');
+
+      // Sort data
+      metrics.sort((a, b) => {
+        let valA = a[currentSortKey];
+        let valB = b[currentSortKey];
+
+        if (typeof valA === 'string') {
+          return currentSortOrder === 'asc' 
+            ? valA.localeCompare(valB, 'th') 
+            : valB.localeCompare(valA, 'th');
+        }
+
+        return currentSortOrder === 'asc' ? valA - valB : valB - valA;
+      });
+
+      // Update header sort indicators
+      const headers = ['name', 'latestNav', 'diffPrevDay', 'pctPrevDay', 'pctPrevMonth', 'pctYTD', 'pctSinceInception'];
+      headers.forEach(key => {
+        const ind = document.getElementById(`sort_${key}`);
+        const th = ind.closest('th');
+        if (key === currentSortKey) {
+          th.classList.add('th-active');
+          ind.textContent = currentSortOrder === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('th-active');
+          ind.textContent = '↕';
+        }
+      });
+
+      tbody.innerHTML = '';
+
+      metrics.forEach(row => {
+        const isSelected = selectedPlanIds.has(row.id);
+        const tr = document.createElement('tr');
+        tr.className = isSelected ? 'row-selected' : '';
+        tr.id = `row_${row.id}`;
+
+        tr.innerHTML = `
+          <td>
+            <div class="plan-name-cell">
+              <span class="plan-table-dot" style="background-color: ${row.color};"></span>
+              <span>${row.name}</span>
+            </div>
+          </td>
+          <td class="text-right"><strong>${row.latestNav.toFixed(4)}</strong></td>
+          <td class="text-right">${formatChangeValue(row.diffPrevDay, false, 4)}</td>
+          <td class="text-right">${formatChangeValue(row.pctPrevDay, true, 2)}</td>
+          <td class="text-right">${formatChangeValue(row.pctPrevMonth, true, 2)}</td>
+          <td class="text-right">${formatChangeValue(row.pctYTD, true, 2)}</td>
+          <td class="text-right">${formatChangeValue(row.pctSinceInception, true, 2)}</td>
+        `;
+
+        // Row click toggles plan selection
+        tr.addEventListener('click', () => {
+          handlePlanToggle(row.id);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    /**
+     * Format ISO date string into Thai readable format
+     */
+    function formatThaiDate(dateStr) {
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      const day = parseInt(parts[2], 10);
+      const monthIdx = parseInt(parts[1], 10) - 1;
+      const thaiYearShort = (parseInt(parts[0], 10) + 543) % 100;
+
+      const thaiMonthsShort = [
+        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+      ];
+
+      return `${day} ${thaiMonthsShort[monthIdx]} ${thaiYearShort}`;
+    }
+
+    /**
+     * Update Chart.js Line Graph based on current filters and plan selections
+     */
+    function updateChart() {
+      const canvas = document.getElementById('navChart');
+      const emptyState = document.getElementById('chartEmptyState');
+      const summaryText = document.getElementById('chartSummaryText');
+
+      // Check if any plan is selected
+      if (selectedPlanIds.size === 0) {
+        canvas.style.display = 'none';
+        emptyState.style.display = 'flex';
+        summaryText.textContent = '0 แผน · กรุณาเลือกแผนการลงทุน';
+        return;
+      }
+
+      canvas.style.display = 'block';
+      emptyState.style.display = 'none';
+
+      // Read filter inputs
+      const startDateVal = document.getElementById('startDate').value;
+      const endDateVal = document.getElementById('endDate').value;
+      const viewInterval = document.getElementById('viewInterval').value; // 'daily', 'weekly', 'monthly'
+      const comparisonType = document.getElementById('comparisonType').value; // 'real', 'base100'
+
+      // Filter dates
+      let filteredDates = allDates.filter(d => {
+        if (startDateVal && d < startDateVal) return false;
+        if (endDateVal && d > endDateVal) return false;
+        return true;
+      });
+
+      if (filteredDates.length === 0) {
+        filteredDates = allDates.slice(-30); // Fallback if out of bounds
+      }
+
+      // Resample according to viewInterval
+      let sampledDates = [];
+      if (viewInterval === 'daily') {
+        sampledDates = filteredDates;
+      } else if (viewInterval === 'weekly') {
+        // Sample every 5 trading days (~1 week) and always include the last day
+        for (let i = 0; i < filteredDates.length; i += 5) {
+          sampledDates.push(filteredDates[i]);
+        }
+        if (sampledDates[sampledDates.length - 1] !== filteredDates[filteredDates.length - 1]) {
+          sampledDates.push(filteredDates[filteredDates.length - 1]);
+        }
+      } else if (viewInterval === 'monthly') {
+        // Sample month ends
+        let lastMonth = '';
+        for (let i = 0; i < filteredDates.length; i++) {
+          const m = filteredDates[i].substring(0, 7);
+          if (m !== lastMonth && i > 0) {
+            sampledDates.push(filteredDates[i - 1]);
+          }
+          lastMonth = m;
+        }
+        sampledDates.push(filteredDates[filteredDates.length - 1]);
+      }
+
+      // Build datasets for selected plans
+      const datasets = [];
+      const selectedList = INVESTMENT_PLANS.filter(p => selectedPlanIds.has(p.id));
+
+      selectedList.forEach(plan => {
+        const fullSeries = historicalDataByPlan[plan.id];
+        const dateNavMap = new Map(fullSeries.map(item => [item.date, item.nav]));
+
+        // Calculate values for sampled dates
+        let baseFirstNav = null;
+        const dataPoints = [];
+
+        sampledDates.forEach(d => {
+          const nav = dateNavMap.get(d) ?? null;
+          if (nav !== null && baseFirstNav === null) {
+            baseFirstNav = nav;
+          }
+
+          if (nav === null) {
+            dataPoints.push(null);
+          } else if (comparisonType === 'base100') {
+            // (navCurrent / navFirst) * 100
+            const indexedVal = baseFirstNav > 0 ? (nav / baseFirstNav) * 100 : 100;
+            dataPoints.push(parseFloat(indexedVal.toFixed(2)));
+          } else {
+            // Real value
+            dataPoints.push(nav);
+          }
+        });
+
+        datasets.push({
+          label: plan.name,
+          data: dataPoints,
+          borderColor: plan.color,
+          backgroundColor: plan.color,
+          borderWidth: 2.2,
+          pointRadius: sampledDates.length > 80 ? 0 : 2.5,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: plan.color,
+          pointHoverBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2,
+          tension: 0.25,
+          fill: false
+        });
+      });
+
+      // Update summary text
+      const viewThaiMap = { daily: 'รายวัน', weekly: 'รายสัปดาห์', monthly: 'รายเดือน' };
+      const compThaiMap = { real: 'มูลค่าจริง', base100: 'ดัชนีฐาน 100' };
+      summaryText.textContent = `${selectedList.length} แผน · ${sampledDates.length} จุด · ${viewThaiMap[viewInterval]} · ${compThaiMap[comparisonType]}`;
+
+      // X-Axis Thai labels
+      const labels = sampledDates.map(d => formatThaiDate(d));
+
+      const yAxisTitle = comparisonType === 'base100' 
+        ? 'ดัชนี (ฐาน 100)' 
+        : 'มูลค่าต่อหน่วย (บาท)';
+
+      // If chart exists, update; else create new
+      if (chartInstance) {
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets = datasets;
+        chartInstance.options.scales.y.title.text = yAxisTitle;
+        chartInstance.options.scales.y.ticks.callback = function(value) {
+          return comparisonType === 'base100' ? value.toFixed(1) : value.toFixed(2);
+        };
+        chartInstance.update('none');
+      } else {
+        const ctx = canvas.getContext('2d');
+        chartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  usePointStyle: true,
+                  pointStyle: 'circle',
+                  boxWidth: 8,
+                  padding: 16,
+                  font: {
+                    family: "'Noto Sans Thai', sans-serif",
+                    size: 12.5,
+                    weight: '500'
+                  },
+                  color: '#334155'
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                titleFont: {
+                  family: "'Noto Sans Thai', sans-serif",
+                  size: 13,
+                  weight: '600'
+                },
+                bodyFont: {
+                  family: "'Noto Sans Thai', sans-serif",
+                  size: 12.5
+                },
+                padding: 12,
+                cornerRadius: 8,
+                boxPadding: 6,
+                usePointStyle: true,
+                callbacks: {
+                  label: function(context) {
+                    const label = context.dataset.label || '';
+                    const val = context.parsed.y;
+                    if (val === null) return `${label}: -`;
+                    if (comparisonType === 'base100') {
+                      return `${label}: ${val.toFixed(2)} จุด`;
+                    }
+                    return `${label}: ${val.toFixed(4)} บาท`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: false
+                },
+                ticks: {
+                  font: {
+                    family: "'Noto Sans Thai', sans-serif",
+                    size: 11
+                  },
+                  color: '#64748b',
+                  maxTicksLimit: 10,
+                  maxRotation: 0
+                }
+              },
+              y: {
+                position: 'left',
+                grid: {
+                  color: '#f1f5f9'
+                },
+                title: {
+                  display: true,
+                  text: yAxisTitle,
+                  font: {
+                    family: "'Noto Sans Thai', sans-serif",
+                    size: 12,
+                    weight: '600'
+                  },
+                  color: '#475569',
+                  padding: { bottom: 8 }
+                },
+                ticks: {
+                  font: {
+                    family: "'Noto Sans Thai', sans-serif",
+                    size: 11
+                  },
+                  color: '#64748b',
+                  callback: function(value) {
+                    return comparisonType === 'base100' ? value.toFixed(1) : value.toFixed(2);
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    /**
+     * Setup Table Header Click Sort Events
+     */
+    function initTableSorting() {
+      const headers = document.querySelectorAll('#navSummaryTable th');
+      headers.forEach(th => {
+        th.addEventListener('click', () => {
+          const key = th.getAttribute('data-sort-key');
+          if (!key) return;
+
+          if (currentSortKey === key) {
+            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+          } else {
+            currentSortKey = key;
+            currentSortOrder = (key === 'name') ? 'asc' : 'desc';
+          }
+
+          renderSummaryTable();
+        });
+      });
+    }
+
+    /**
+     * Initialize Date Inputs with defaults (1 year ago to today)
+     */
+    function initDateInputs() {
+      const today = new Date();
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+      const toDateInputStr = (d) => d.toISOString().split('T')[0];
+
+      const startInput = document.getElementById('startDate');
+      const endInput = document.getElementById('endDate');
+
+      startInput.value = toDateInputStr(oneYearAgo);
+      endInput.value = toDateInputStr(today);
+
+      // Constraints
+      startInput.max = toDateInputStr(today);
+      endInput.max = toDateInputStr(today);
+    }
+
+    /**
+     * Bind UI event listeners
+     */
+    function initEventListeners() {
+      // "เลือกทั้งหมด" button: select up to max 5
+      document.getElementById('btnSelectAll').addEventListener('click', () => {
+        selectedPlanIds.clear();
+        INVESTMENT_PLANS.slice(0, 5).forEach(p => selectedPlanIds.add(p.id));
+        showToast('เลือก 5 แผนแรก เนื่องจากจำกัดการเปรียบเทียบสูงสุด 5 แผน', false);
+        updateSelectionCountUI();
+        refreshActivePillClasses();
+        renderSummaryTable();
+        updateChart();
+      });
+
+      // "ล้าง" button: clear all
+      document.getElementById('btnClearSelection').addEventListener('click', () => {
+        selectedPlanIds.clear();
+        updateSelectionCountUI();
+        refreshActivePillClasses();
+        renderSummaryTable();
+        updateChart();
+      });
+
+      // "แสดงผล" button
+      document.getElementById('btnApplyFilter').addEventListener('click', () => {
+        updateChart();
+        showToast('อัปเดตข้อมูลกราฟเรียบร้อยแล้ว');
+      });
+
+      // Dynamic update when changing dropdowns or dates
+      document.getElementById('viewInterval').addEventListener('change', updateChart);
+      document.getElementById('comparisonType').addEventListener('change', updateChart);
+      document.getElementById('startDate').addEventListener('change', updateChart);
+      document.getElementById('endDate').addEventListener('change', updateChart);
+
+      // Account button toast simulation
+      document.getElementById('btnAccount').addEventListener('click', () => {
+        showToast('เข้าสู่ระบบในชื่อ: นักลงทุนตัวอย่าง (Demo Account)');
+      });
+    }
+
+    /**
+     * App Bootstrap on DOM Ready
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      generateHistoricalData();
+      initDateInputs();
+      renderPlanSelector();
+      initTableSorting();
+      renderSummaryTable();
+      initEventListeners();
+      updateChart();
+    });
+  </script>
+</body>
+</html>
