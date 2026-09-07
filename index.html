@@ -155,13 +155,14 @@
        ========================================================================== */
     .main-content, .app-container {
       padding: 16px 24px 28px 24px;
-      max-width: 1120px;
+      max-width: 1260px;
       margin: 0 auto;
       width: 100%;
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      box-sizing: border-box;
     }
 
     /* ==========================================================================
@@ -210,6 +211,9 @@
       border-radius: 16px;
       box-shadow: 0 2px 4px rgba(4, 120, 87, 0.02);
       padding: 16px;
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .section-title, .card-header-row {
@@ -225,6 +229,36 @@
       font-size: 15px;
       font-weight: 600;
       color: var(--text);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+      animation: pulseDot 2s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseDot {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(1.3); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .live-data-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #065f46;
+      background: #e8f7f0;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid #bbf7d0;
+      letter-spacing: -0.01em;
     }
 
     .card-meta-text {
@@ -264,31 +298,35 @@
     }
 
     /* ==========================================================================
-       Plan Grid - 6 Columns High Density
+       Plan Grid - Responsive High Density (4 Columns Desktop, 3/2/1 on smaller)
        ========================================================================== */
     .plan-grid, .plans-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .plan-chip, .plan-chip-label {
       border: 1px solid var(--border);
-      padding: 6px 8px;
+      padding: 7px 11px;
       border-radius: 99px;
-      font-size: 12px;
-      text-align: center;
+      font-size: 12.5px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       background: var(--white);
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
+      justify-content: flex-start;
+      gap: 7px;
       position: relative;
       user-select: none;
       color: #334155;
       font-weight: 500;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .plan-chip:hover, .plan-chip-label:hover {
@@ -310,8 +348,8 @@
     }
 
     .plan-color-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -320,6 +358,9 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+      text-align: left;
     }
 
     .plan-check-icon {
@@ -332,6 +373,7 @@
       transform: scale(0.6);
       transition: all 0.15s ease;
       flex-shrink: 0;
+      margin-left: auto;
     }
 
     .plan-chip-label.selected .plan-check-icon {
@@ -410,33 +452,39 @@
     }
 
     /* ==========================================================================
-       Dashboard Split Grid - Side-by-Side Chart & Table
+       Dashboard Layout - Full Width Stacked (with optional Side-by-Side)
        ========================================================================== */
     .dashboard-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+      display: flex;
+      flex-direction: column;
       gap: 16px;
-      flex: 1;
-      min-height: 0;
+      width: 100%;
+    }
+
+    .dashboard-grid.side-by-side {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
+      gap: 16px;
     }
 
     .chart-area {
       display: flex;
       flex-direction: column;
+      width: 100%;
     }
 
     .chart-container-wrap {
       position: relative;
       width: 100%;
-      height: 330px;
+      height: 380px;
       min-height: 280px;
     }
 
     .chart-summary-badge {
       display: inline-flex;
       align-items: center;
-      font-size: 11px;
-      color: #94a3b8;
+      font-size: 12px;
+      color: #64748b;
       font-weight: 500;
     }
 
@@ -473,40 +521,43 @@
     }
 
     /* ==========================================================================
-       NAV Summary Table - High Density
+       NAV Summary Table - Full Width & Clean Formatting
        ========================================================================== */
     .table-area {
       display: flex;
       flex-direction: column;
+      width: 100%;
     }
 
     .table-responsive-wrapper {
       width: 100%;
       overflow-x: auto;
       overflow-y: auto;
-      max-height: 330px;
+      max-height: 560px;
       border-radius: 8px;
       border: 1px solid var(--border);
       -webkit-overflow-scrolling: touch;
+      background: var(--white);
     }
 
     .data-table, .nav-table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
-      font-size: 12px;
+      font-size: 13px;
       white-space: nowrap;
     }
 
     .data-table th, .nav-table th {
       text-align: left;
-      padding: 7px 9px;
+      padding: 9px 12px;
       background: #f8fafc;
       position: sticky;
       top: 0;
       z-index: 10;
       border-bottom: 1px solid var(--border);
-      color: #64748b;
-      font-weight: 500;
+      color: #475569;
+      font-weight: 600;
       cursor: pointer;
       user-select: none;
       transition: background-color 0.15s ease;
@@ -538,7 +589,7 @@
     }
 
     .data-table td, .nav-table td {
-      padding: 7px 9px;
+      padding: 9px 12px;
       border-bottom: 1px solid #f1f5f9;
       color: #334155;
     }
@@ -591,6 +642,56 @@
 
     .val-neutral {
       color: var(--val-neutral);
+    }
+
+    /* ==========================================================================
+       ATH (All-Time High) Golden Crown Badge
+       ========================================================================== */
+    .nav-val-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .nav-ath-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      padding: 1.5px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      vertical-align: middle;
+      box-shadow: 0 1px 2px rgba(180, 83, 9, 0.1);
+      white-space: nowrap;
+      user-select: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .nav-ath-badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(180, 83, 9, 0.18);
+    }
+
+    .nav-ath-badge.nav-ath-chip {
+      padding: 1px 4.5px;
+      font-size: 9.5px;
+      border-radius: 4px;
+      margin-left: auto;
+      margin-right: 2px;
+    }
+
+    .ath-crown-svg {
+      display: inline-block;
+      vertical-align: -1px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 1px 1px rgba(180, 83, 9, 0.2));
     }
 
     /* ==========================================================================
@@ -651,14 +752,14 @@
     }
 
     /* ==========================================================================
-       Responsive Media Queries - High Density Adaptations
+       Responsive Media Queries - Adaptive Layout
        ========================================================================== */
-    @media (max-width: 1080px) {
-      .dashboard-grid {
+    @media (max-width: 1100px) {
+      .dashboard-grid.side-by-side {
         grid-template-columns: 1fr;
       }
       .plan-grid, .plans-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -672,7 +773,7 @@
       }
 
       .plan-grid, .plans-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .filter-row, .filter-form {
@@ -685,12 +786,21 @@
       }
 
       .chart-container-wrap {
-        height: 280px;
+        height: 300px;
       }
 
       .section-title, .card-header-row {
         flex-direction: column;
         align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .plan-grid, .plans-grid {
+        grid-template-columns: 1fr;
+      }
+      .plan-chip, .plan-chip-label {
+        padding: 8px 12px;
       }
     }
   </style>
@@ -730,14 +840,28 @@
   <div class="app-container">
     <!-- 2) Header Section -->
     <header class="page-header">
-      <div class="nav-badge">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-        </svg>
-        <span>NAV</span>
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div class="nav-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            </svg>
+            <span>NAV กบข.</span>
+          </div>
+          <div class="live-data-badge" id="liveDataBadge">
+            <span class="pulse-dot"></span>
+            <span id="liveStatusText">ข้อมูลจริงจาก กบข. · กำลังโหลด...</span>
+          </div>
+        </div>
+        <button type="button" class="btn-action-text" id="btnRefreshData" style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          <span>รีเฟรชข้อมูลจริง</span>
+        </button>
       </div>
-      <h1 class="page-title">มูลค่าหน่วยลงทุน</h1>
-      <p class="page-description">เลือกแผนเพื่อเปรียบเทียบผลการเคลื่อนไหวของมูลค่าหน่วยลงทุนในช่วงเวลาที่ต้องการ</p>
+      <h1 class="page-title">มูลค่าหน่วยลงทุน (NAV) กบข.</h1>
+      <p class="page-description">ดึงข้อมูลจริงจากระบบ กบข. ตรงกับ gpftool สำหรับเปรียบเทียบผลการเคลื่อนไหวมูลค่าหน่วยลงทุนรายวัน</p>
     </header>
 
     <!-- 3) Card เลือกแผนลงทุน -->
@@ -747,8 +871,8 @@
           <h2 class="card-title">เลือกแผนการลงทุน</h2>
         </div>
         <div class="plan-selector-actions">
-          <span class="card-meta-text" id="selectedCountText">เลือกแล้ว <span class="card-meta-highlight" id="selectedCountNum">2</span> จาก 12 แผน</span>
-          <button type="button" class="btn-action-text" id="btnSelectAll">เลือกทั้งหมด</button>
+          <span class="card-meta-text" id="selectedCountText">เลือกแล้ว <span class="card-meta-highlight" id="selectedCountNum">2</span> จาก 16 แผน</span>
+          <button type="button" class="btn-action-text" id="btnSelectAll">เลือก 5 แผนแรก</button>
           <button type="button" class="btn-action-text" id="btnClearSelection">ล้าง</button>
         </div>
       </div>
@@ -807,8 +931,8 @@
       </form>
     </section>
 
-    <!-- Dashboard Grid Container for High Density (Side-by-Side on Desktop) -->
-    <div class="dashboard-grid">
+    <!-- Dashboard Grid Container (Full-width Stacked by default, toggleable to Side-by-Side) -->
+    <div class="dashboard-grid" id="dashboardGrid">
       <!-- 6) Card กราฟเปรียบเทียบ -->
       <section class="dashboard-card card chart-area" id="cardChart">
         <div class="card-header-row section-title">
@@ -840,52 +964,57 @@
           <div class="card-title-wrap">
             <h2 class="card-title">มูลค่าหน่วยลงทุนล่าสุด</h2>
           </div>
-          <span class="card-meta-text">คลิกหัวตารางเพื่อเรียงลำดับ</span>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span class="card-meta-text" id="tableMetaText">แสดงครบ 16 แผน · คลิกหัวตารางเพื่อเรียงลำดับ</span>
+            <button type="button" class="btn-action-text" id="btnToggleLayout" title="สลับมุมมองระหว่างเต็มความกว้างและข้างกัน">
+              <span id="layoutToggleText">สลับเป็นมุมมองคู่ขนาน</span>
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive-wrapper">
           <table class="nav-table data-table" id="navSummaryTable">
             <thead>
               <tr>
-                <th data-sort-key="name">
+                <th data-sort-key="name" style="min-width: 220px;">
                   <div class="th-content">
-                    <span>แผน</span>
+                    <span>แผนการลงทุน</span>
                     <span class="sort-indicator" id="sort_name">▲</span>
                   </div>
                 </th>
-                <th data-sort-key="latestNav" class="text-right">
+                <th data-sort-key="latestNav" class="text-right" style="min-width: 110px;">
                   <div class="th-content th-right">
-                    <span>NAV ล่าสุด</span>
+                    <span>NAV ล่าสุด (บาท)</span>
                     <span class="sort-indicator" id="sort_latestNav">↕</span>
                   </div>
                 </th>
-                <th data-sort-key="diffPrevDay" class="text-right">
+                <th data-sort-key="diffPrevDay" class="text-right" style="min-width: 100px;">
                   <div class="th-content th-right">
                     <span>เทียบวันก่อน</span>
                     <span class="sort-indicator" id="sort_diffPrevDay">↕</span>
                   </div>
                 </th>
-                <th data-sort-key="pctPrevDay" class="text-right">
+                <th data-sort-key="pctPrevDay" class="text-right" style="min-width: 90px;">
                   <div class="th-content th-right">
-                    <span>% วันก่อน</span>
+                    <span>% 1 วัน</span>
                     <span class="sort-indicator" id="sort_pctPrevDay">↕</span>
                   </div>
                 </th>
-                <th data-sort-key="pctPrevMonth" class="text-right">
+                <th data-sort-key="pctPrevMonth" class="text-right" style="min-width: 95px;">
                   <div class="th-content th-right">
-                    <span>% เดือนก่อน</span>
+                    <span>% 1 เดือน</span>
                     <span class="sort-indicator" id="sort_pctPrevMonth">↕</span>
                   </div>
                 </th>
-                <th data-sort-key="pctYTD" class="text-right">
+                <th data-sort-key="pctYTD" class="text-right" style="min-width: 90px;">
                   <div class="th-content th-right">
                     <span>% ต้นปี</span>
                     <span class="sort-indicator" id="sort_pctYTD">↕</span>
                   </div>
                 </th>
-                <th data-sort-key="pctSinceInception" class="text-right">
+                <th data-sort-key="pctSinceInception" class="text-right" style="min-width: 110px;">
                   <div class="th-content th-right">
-                    <span>% ตั้งกองทุน</span>
+                    <span>% ตั้งแต่จัดตั้ง</span>
                     <span class="sort-indicator" id="sort_pctSinceInception">↕</span>
                   </div>
                 </th>
@@ -906,7 +1035,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="app-container" style="padding-bottom: 0;">
-      <p>© FundView - Investment NAV Dashboard. ข้อมูลเพื่อการจำลองและการศึกษาเท่านั้น</p>
+      <p>© FundView - Investment NAV Dashboard. ข้อมูลจริงจาก กองทุนบำเหน็จบำนาญข้าราชการ (กบข.) อัปเดตรายวัน</p>
     </div>
   </footer>
 
@@ -919,75 +1048,110 @@
      * FundView Mock Data Engine and Chart.js Controller
      */
 
-    // 1. Definition of 12 Investment Plans with distinct branding colors
+    // 1. Definition of all 16 Real GPF Investment Plans
     const INVESTMENT_PLANS = [
-      { id: 'debt', name: 'แผนตราสารหนี้', color: '#0d9488', baseNav: 11.20, drift: 0.00015, vol: 0.001 },
-      { id: 'thai_eq', name: 'แผนหุ้นไทย', color: '#2563eb', baseNav: 21.50, drift: 0.00030, vol: 0.012 },
-      { id: 'global_eq', name: 'แผนหุ้นต่างประเทศ', color: '#047857', baseNav: 28.40, drift: 0.00055, vol: 0.014 },
-      { id: 'agg20', name: 'แผนเชิงรุก 20', color: '#0284c7', baseNav: 13.60, drift: 0.00022, vol: 0.0035 },
-      { id: 'agg35', name: 'แผนเชิงรุก 35', color: '#6366f1', baseNav: 15.80, drift: 0.00028, vol: 0.0055 },
-      { id: 'agg65', name: 'แผนเชิงรุก 65', color: '#d97706', baseNav: 22.40, drift: 0.00042, vol: 0.0095 },
-      { id: 'agg75', name: 'แผนเชิงรุก 75', color: '#ea580c', baseNav: 24.80, drift: 0.00048, vol: 0.0115 },
-      { id: 'gold', name: 'แผนทองคำ', color: '#ca8a04', baseNav: 17.50, drift: 0.00035, vol: 0.013 },
-      { id: 'reit', name: 'แผนอสังหาริมทรัพย์', color: '#9333ea', baseNav: 14.80, drift: 0.00025, vol: 0.007 },
-      { id: 'capital_pres', name: 'แผนรักษาเงินต้น', color: '#4b5563', baseNav: 10.40, drift: 0.00010, vol: 0.0005 },
-      { id: 'balanced', name: 'แผนสมดุล', color: '#059669', baseNav: 18.90, drift: 0.00036, vol: 0.0068 },
-      { id: 'sustainable', name: 'แผนยั่งยืน', color: '#e11d48', baseNav: 20.30, drift: 0.00045, vol: 0.0105 }
+      { id: 'global_eq', name: 'แผนหุ้นต่างประเทศ', color: '#047857' },
+      { id: 'agg65', name: 'แผนเชิงรุก 65', color: '#d97706' },
+      { id: 'thai_eq', name: 'แผนหุ้นไทย', color: '#2563eb' },
+      { id: 'gold', name: 'แผนทองคำ', color: '#ca8a04' },
+      { id: 'agg75', name: 'แผนเชิงรุก 75', color: '#ea580c' },
+      { id: 'agg35', name: 'แผนเชิงรุก 35', color: '#6366f1' },
+      { id: 'agg20', name: 'แผนเชิงรุก 20', color: '#0284c7' },
+      { id: 'debt', name: 'แผนตราสารหนี้', color: '#0d9488' },
+      { id: 'foreign_debt', name: 'แผนตราสารหนี้ต่างประเทศ', color: '#0891b2' },
+      { id: 'reit', name: 'แผนกองทุนอสังหาริมทรัพย์ไทย', color: '#9333ea' },
+      { id: 'vayupak', name: 'แผนกองทุนรวมวายุภักษ์', color: '#4f46e5' },
+      { id: 'shariah', name: 'แผนการลงทุนตามหลักชะรีอะฮ์', color: '#16a34a' },
+      { id: 'general', name: 'แผนลงทุนพื้นฐานทั่วไป', color: '#059669' },
+      { id: 'money_market', name: 'แผนเงินฝากและตราสารหนี้ระยะสั้น', color: '#475569' },
+      { id: 'protect1', name: 'แผนมุ่งคุ้มครองเงินต้น 1', color: '#64748b' },
+      { id: 'retire69', name: 'แผนเกษียณสบายใจ 2569', color: '#db2777' }
     ];
 
-    // Default selected plans as required: “แผนหุ้นต่างประเทศ” and “แผนเชิงรุก 65”
+    // Default selected plans: แผนหุ้นต่างประเทศ and แผนเชิงรุก 65
     let selectedPlanIds = new Set(['global_eq', 'agg65']);
 
-    // Application state
-    let historicalDataByPlan = {}; // planId -> [{ date: 'YYYY-MM-DD', nav: number }, ...]
-    let allDates = []; // Sorted list of unique business dates
+    // State storage for real GPF data
+    let realPlanStats = {}; // Plan Name -> stats object
     let chartInstance = null;
     let currentSortKey = 'latestNav';
     let currentSortOrder = 'desc'; // 'asc' or 'desc'
+    let latestDataDate = '';
+    let isFetchingChart = false;
 
     /**
-     * Generate 2-year realistic daily historical NAV series using pseudo-random walk
+     * Format date string into Thai readable format (e.g., "3 ก.ย. 69")
      */
-    function generateHistoricalData() {
-      const today = new Date();
-      const totalDays = 730; // 2 years back
-      const rawDates = [];
+    function formatThaiDate(dateStr, isMonthOnly = false) {
+      if (!dateStr) return '-';
+      const parts = dateStr.split('-');
+      const thaiMonthsShort = [
+        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+      ];
+      if (parts.length === 3) {
+        const day = parseInt(parts[2], 10);
+        const monthIdx = parseInt(parts[1], 10) - 1;
+        const thaiYearShort = (parseInt(parts[0], 10) + 543) % 100;
+        if (isMonthOnly) return `${thaiMonthsShort[monthIdx]} ${thaiYearShort}`;
+        return `${day} ${thaiMonthsShort[monthIdx]} ${thaiYearShort}`;
+      }
+      if (parts.length === 2) {
+        const monthIdx = parseInt(parts[1], 10) - 1;
+        const thaiYearShort = (parseInt(parts[0], 10) + 543) % 100;
+        return `${thaiMonthsShort[monthIdx]} ${thaiYearShort}`;
+      }
+      return dateStr;
+    }
 
-      // Collect Monday-Friday trading days
-      for (let i = totalDays; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        const dayOfWeek = d.getDay();
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Skip Sat (6) and Sun (0)
-          rawDates.push(d.toISOString().split('T')[0]);
+    /**
+     * Fetch real summary stats for all 16 plans from /api/nav
+     */
+    async function loadAllPlansSummary() {
+      try {
+        const params = new URLSearchParams();
+        INVESTMENT_PLANS.forEach(p => params.append('plan_names[]', p.name));
+        params.append('granularity', 'day');
+        params.append('mode', 'absolute');
+
+        const res = await fetch('/api/nav?' + params.toString());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        if (data && data.stats) {
+          data.stats.forEach(stat => {
+            realPlanStats[stat.plan_name] = stat;
+          });
+
+          if (data.stats_as_of && data.stats_as_of.date) {
+            latestDataDate = data.stats_as_of.date;
+            const badgeText = document.getElementById('liveStatusText');
+            if (badgeText) {
+              badgeText.textContent = `ข้อมูลจริงจาก กบข. · ณ วันที่ ${formatThaiDate(latestDataDate)}`;
+            }
+
+            const tableMeta = document.getElementById('tableMetaText');
+            if (tableMeta) {
+              tableMeta.textContent = `ข้อมูล ณ วันที่ ${formatThaiDate(latestDataDate)} · แสดงครบทั้ง 16 แผน · แผนที่มีตรา 👑 ATH คือมูลค่าสูงสุดตั้งแต่จัดตั้งกองทุน`;
+            }
+
+            // Sync end date input
+            const endInput = document.getElementById('endDate');
+            if (endInput && !endInput.dataset.userEdited) {
+              endInput.value = latestDataDate;
+              endInput.max = latestDataDate;
+            }
+          }
+          renderPlanSelector();
+          renderSummaryTable();
+        }
+      } catch (err) {
+        console.error('Failed to load all plans summary:', err);
+        const badgeText = document.getElementById('liveStatusText');
+        if (badgeText) {
+          badgeText.textContent = 'เชื่อมต่อข้อมูลไม่สำเร็จ (คลิกเพื่อลองใหม่)';
         }
       }
-
-      allDates = rawDates;
-
-      // Seeded-like realistic generator for each plan
-      INVESTMENT_PLANS.forEach((plan, planIdx) => {
-        let currentNav = plan.baseNav;
-        const series = [];
-
-        for (let i = 0; i < allDates.length; i++) {
-          const dateStr = allDates[i];
-          // Deterministic pseudo-random variation based on planIdx and day index
-          const sinComponent = Math.sin((i + planIdx * 30) / 18) * 0.006;
-          const cycleComponent = Math.cos((i * 1.5 + planIdx * 45) / 45) * 0.008;
-          const noise = ((Math.sin(i * 997 + planIdx * 331) * 10000) % 1) * plan.vol;
-          
-          const dailyChangePct = plan.drift + sinComponent * plan.vol * 4 + cycleComponent * plan.vol * 2 + noise;
-          currentNav = Math.max(1, currentNav * (1 + dailyChangePct));
-
-          series.push({
-            date: dateStr,
-            nav: parseFloat(currentNav.toFixed(4))
-          });
-        }
-
-        historicalDataByPlan[plan.id] = series;
-      });
     }
 
     /**
@@ -995,39 +1159,37 @@
      */
     function calculatePlanMetrics() {
       return INVESTMENT_PLANS.map(plan => {
-        const series = historicalDataByPlan[plan.id];
-        const n = series.length;
-        if (n === 0) return null;
-
-        const latestItem = series[n - 1];
-        const prevDayItem = n > 1 ? series[n - 2] : latestItem;
-        
-        // Approx 22 trading days ago = 1 month
-        const prevMonthIdx = Math.max(0, n - 22);
-        const prevMonthItem = series[prevMonthIdx];
-
-        // Start of current year
-        const currentYear = new Date().getFullYear().toString();
-        const startOfYearItem = series.find(item => item.date.startsWith(currentYear)) || series[0];
-        const inceptionItem = series[0];
-
-        const latestNav = latestItem.nav;
-        const diffPrevDay = latestNav - prevDayItem.nav;
-        const pctPrevDay = ((latestNav - prevDayItem.nav) / prevDayItem.nav) * 100;
-        const pctPrevMonth = ((latestNav - prevMonthItem.nav) / prevMonthItem.nav) * 100;
-        const pctYTD = ((latestNav - startOfYearItem.nav) / startOfYearItem.nav) * 100;
-        const pctSinceInception = ((latestNav - inceptionItem.nav) / inceptionItem.nav) * 100;
-
+        const stat = realPlanStats[plan.name];
+        if (stat) {
+          const isAth = Boolean(stat.is_ath) || (stat.latest_nav && stat.max_nav && Math.abs(Number(stat.latest_nav) - Number(stat.max_nav)) < 0.0001);
+          return {
+            id: plan.id,
+            name: plan.name,
+            color: plan.color,
+            latestNav: Number(stat.latest_nav) || 0,
+            maxNav: Number(stat.max_nav) || 0,
+            isATH: isAth,
+            diffPrevDay: Number(stat.day_change) || 0,
+            pctPrevDay: Number(stat.day_change_pct) || 0,
+            pctPrevMonth: Number(stat.month_change_pct) || 0,
+            pctYTD: Number(stat.ytd_change_pct) || 0,
+            pctSinceInception: Number(stat.inception_change_pct) || 0,
+            latestDate: stat.latest_date || ''
+          };
+        }
         return {
           id: plan.id,
           name: plan.name,
           color: plan.color,
-          latestNav,
-          diffPrevDay,
-          pctPrevDay,
-          pctPrevMonth,
-          pctYTD,
-          pctSinceInception
+          latestNav: 0,
+          maxNav: 0,
+          isATH: false,
+          diffPrevDay: 0,
+          pctPrevDay: 0,
+          pctPrevMonth: 0,
+          pctYTD: 0,
+          pctSinceInception: 0,
+          latestDate: ''
         };
       });
     }
@@ -1058,7 +1220,7 @@
     }
 
     /**
-     * Render the 12 plan selection chips/pills
+     * Render the 16 plan selection chips/pills
      */
     function renderPlanSelector() {
       const grid = document.getElementById('plansGrid');
@@ -1066,10 +1228,14 @@
 
       INVESTMENT_PLANS.forEach(plan => {
         const isSelected = selectedPlanIds.has(plan.id);
+        const stat = realPlanStats[plan.name];
+        const isAth = stat && (Boolean(stat.is_ath) || (stat.latest_nav && stat.max_nav && Math.abs(Number(stat.latest_nav) - Number(stat.max_nav)) < 0.0001));
 
         const label = document.createElement('label');
         label.className = `plan-chip-label ${isSelected ? 'selected' : ''}`;
         label.id = `chip_${plan.id}`;
+        label.title = isAth ? `${plan.name} (สถิติสูงสุด ATH)` : plan.name;
+        label.setAttribute('aria-label', plan.name);
 
         const input = document.createElement('input');
         input.type = 'checkbox';
@@ -1081,9 +1247,14 @@
           handlePlanToggle(plan.id);
         });
 
+        const athMiniBadge = isAth
+          ? `<span class="nav-ath-badge nav-ath-chip" title="ราคาสูงสุดตั้งแต่จัดตั้ง (All-Time High)"><svg class="ath-crown-svg" width="10" height="9" viewBox="0 0 24 24" fill="#f59e0b" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path></svg>ATH</span>`
+          : '';
+
         label.innerHTML = `
           <span class="plan-color-dot" style="background-color: ${plan.color};"></span>
           <span class="plan-chip-name">${plan.name}</span>
+          ${athMiniBadge}
           <svg class="plan-check-icon" viewBox="0 0 24 24">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
@@ -1105,7 +1276,6 @@
       } else {
         if (selectedPlanIds.size >= 5) {
           showToast('สามารถเลือกเปรียบเทียบได้สูงสุด 5 แผนเท่านั้น', true);
-          // Re-render UI to revert checkbox state
           renderPlanSelector();
           return;
         }
@@ -1142,7 +1312,7 @@
      * Format number with signs and colors for table
      */
     function formatChangeValue(val, isPercentage = false, decimals = 2) {
-      if (isNaN(val)) return '-';
+      if (isNaN(val) || val === null) return '-';
       const formatted = Math.abs(val).toFixed(decimals);
       const suffix = isPercentage ? '%' : '';
 
@@ -1151,7 +1321,7 @@
       } else if (val < 0) {
         return `<span class="val-negative">-${formatted}${suffix}</span>`;
       } else {
-        return `<span class="val-neutral">0.${'0'.repeat(decimals)}${suffix}</span>`;
+        return `<span class="val-neutral">${(0).toFixed(decimals)}${suffix}</span>`;
       }
     }
 
@@ -1180,6 +1350,7 @@
       const headers = ['name', 'latestNav', 'diffPrevDay', 'pctPrevDay', 'pctPrevMonth', 'pctYTD', 'pctSinceInception'];
       headers.forEach(key => {
         const ind = document.getElementById(`sort_${key}`);
+        if (!ind) return;
         const th = ind.closest('th');
         if (key === currentSortKey) {
           th.classList.add('th-active');
@@ -1198,6 +1369,12 @@
         tr.className = isSelected ? 'row-selected' : '';
         tr.id = `row_${row.id}`;
 
+        const navFormatted = row.latestNav > 0 ? row.latestNav.toFixed(4) : '<span style="color:#94a3b8;">กำลังโหลด...</span>';
+
+        const athBadge = row.isATH
+          ? `<span class="nav-ath-badge" title="ราคาสูงสุดตั้งแต่จัดตั้งกองทุน (All-Time High)"><svg class="ath-crown-svg" width="12" height="11" viewBox="0 0 24 24" fill="#f59e0b" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path></svg>ATH</span>`
+          : '';
+
         tr.innerHTML = `
           <td>
             <div class="plan-name-cell">
@@ -1205,7 +1382,12 @@
               <span>${row.name}</span>
             </div>
           </td>
-          <td class="text-right"><strong>${row.latestNav.toFixed(4)}</strong></td>
+          <td class="text-right">
+            <div class="nav-val-wrap">
+              <strong>${navFormatted}</strong>
+              ${athBadge}
+            </div>
+          </td>
           <td class="text-right">${formatChangeValue(row.diffPrevDay, false, 4)}</td>
           <td class="text-right">${formatChangeValue(row.pctPrevDay, true, 2)}</td>
           <td class="text-right">${formatChangeValue(row.pctPrevMonth, true, 2)}</td>
@@ -1223,32 +1405,120 @@
     }
 
     /**
-     * Format ISO date string into Thai readable format
+     * Chart.js Custom Plugin to render Golden Crown + ATH Badge on peak curve points
      */
-    function formatThaiDate(dateStr) {
-      const parts = dateStr.split('-');
-      if (parts.length !== 3) return dateStr;
-      const day = parseInt(parts[2], 10);
-      const monthIdx = parseInt(parts[1], 10) - 1;
-      const thaiYearShort = (parseInt(parts[0], 10) + 543) % 100;
+    const athChartBadgePlugin = {
+      id: 'athChartBadge',
+      afterDatasetsDraw(chart) {
+        const ctx = chart.ctx;
+        const datasets = chart.data.datasets;
+        if (!datasets || datasets.length === 0) return;
 
-      const thaiMonthsShort = [
-        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
-      ];
+        datasets.forEach((dataset, datasetIdx) => {
+          const planName = dataset.label;
+          const stat = realPlanStats[planName];
+          if (!stat) return;
 
-      return `${day} ${thaiMonthsShort[monthIdx]} ${thaiYearShort}`;
-    }
+          const isPlanAth = Boolean(stat.is_ath) || (stat.latest_nav && stat.max_nav && Math.abs(Number(stat.latest_nav) - Number(stat.max_nav)) < 0.0001);
+          if (!isPlanAth) return;
+
+          const meta = chart.getDatasetMeta(datasetIdx);
+          if (!meta || meta.hidden) return;
+
+          const data = dataset.data;
+          if (!data || data.length === 0) return;
+
+          // Find the peak index in current dataset series
+          let maxVal = -Infinity;
+          let maxIdx = -1;
+          for (let i = 0; i < data.length; i++) {
+            if (data[i] !== null && data[i] !== undefined && data[i] > maxVal) {
+              maxVal = data[i];
+              maxIdx = i;
+            }
+          }
+
+          if (maxIdx >= 0 && meta.data && meta.data[maxIdx]) {
+            const pt = meta.data[maxIdx];
+            const x = pt.x;
+            const y = pt.y;
+
+            if (isNaN(x) || isNaN(y)) return;
+
+            ctx.save();
+
+            // Highlight the peak point with golden aura ring
+            ctx.beginPath();
+            ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+
+            // Pill dimensions matching uploaded image
+            const badgeW = 42;
+            const badgeH = 18;
+            const badgeX = x - badgeW / 2;
+            const badgeY = Math.max(6, y - badgeH - 8);
+
+            // Small connector triangle pointing downwards to peak
+            ctx.beginPath();
+            ctx.moveTo(x - 3.5, badgeY + badgeH);
+            ctx.lineTo(x + 3.5, badgeY + badgeH);
+            ctx.lineTo(x, badgeY + badgeH + 4);
+            ctx.closePath();
+            ctx.fillStyle = '#fef3c7';
+            ctx.fill();
+            ctx.strokeStyle = '#fde68a';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Draw soft warm cream/light gold pill
+            ctx.beginPath();
+            if (ctx.roundRect) {
+              ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 5);
+            } else {
+              ctx.rect(badgeX, badgeY, badgeW, badgeH);
+            }
+            ctx.fillStyle = '#fef3c7';
+            ctx.shadowColor = 'rgba(180, 83, 9, 0.2)';
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetY = 1;
+            ctx.fill();
+            ctx.shadowColor = 'transparent';
+
+            ctx.strokeStyle = '#fde68a';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Golden Crown 👑
+            ctx.font = '10.5px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('👑', badgeX + 3.5, badgeY + badgeH / 2 + 0.5);
+
+            // ATH Text in bold warm amber
+            ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillStyle = '#b45309';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ATH', badgeX + 18, badgeY + badgeH / 2 + 0.5);
+
+            ctx.restore();
+          }
+        });
+      }
+    };
 
     /**
-     * Update Chart.js Line Graph based on current filters and plan selections
+     * Update Chart.js Line Graph with real GPF data
      */
-    function updateChart() {
+    async function updateChart() {
       const canvas = document.getElementById('navChart');
       const emptyState = document.getElementById('chartEmptyState');
       const summaryText = document.getElementById('chartSummaryText');
 
-      // Check if any plan is selected
       if (selectedPlanIds.size === 0) {
         canvas.style.display = 'none';
         emptyState.style.display = 'flex';
@@ -1259,219 +1529,208 @@
       canvas.style.display = 'block';
       emptyState.style.display = 'none';
 
-      // Read filter inputs
       const startDateVal = document.getElementById('startDate').value;
       const endDateVal = document.getElementById('endDate').value;
       const viewInterval = document.getElementById('viewInterval').value; // 'daily', 'weekly', 'monthly'
       const comparisonType = document.getElementById('comparisonType').value; // 'real', 'base100'
 
-      // Filter dates
-      let filteredDates = allDates.filter(d => {
-        if (startDateVal && d < startDateVal) return false;
-        if (endDateVal && d > endDateVal) return false;
-        return true;
-      });
+      summaryText.textContent = `กำลังโหลดข้อมูลจริง ${selectedPlanIds.size} แผน...`;
 
-      if (filteredDates.length === 0) {
-        filteredDates = allDates.slice(-30); // Fallback if out of bounds
-      }
+      try {
+        const selectedList = INVESTMENT_PLANS.filter(p => selectedPlanIds.has(p.id));
+        const params = new URLSearchParams();
+        selectedList.forEach(p => params.append('plan_names[]', p.name));
+        
+        if (startDateVal) params.append('from', startDateVal);
+        if (endDateVal) params.append('to', endDateVal);
+        
+        const apiGranularity = (viewInterval === 'monthly') ? 'month' : 'day';
+        params.append('granularity', apiGranularity);
+        params.append('mode', comparisonType === 'base100' ? 'index' : 'absolute');
 
-      // Resample according to viewInterval
-      let sampledDates = [];
-      if (viewInterval === 'daily') {
-        sampledDates = filteredDates;
-      } else if (viewInterval === 'weekly') {
-        // Sample every 5 trading days (~1 week) and always include the last day
-        for (let i = 0; i < filteredDates.length; i += 5) {
-          sampledDates.push(filteredDates[i]);
+        const res = await fetch('/api/nav?' + params.toString());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        if (!data || !data.series) {
+          throw new Error('ไม่พบข้อมูล Series จาก API');
         }
-        if (sampledDates[sampledDates.length - 1] !== filteredDates[filteredDates.length - 1]) {
-          sampledDates.push(filteredDates[filteredDates.length - 1]);
+
+        let labels = data.labels || [];
+        
+        // Handle weekly downsampling if chosen
+        let displayLabels = labels;
+        let sampleIndices = null;
+        if (viewInterval === 'weekly' && labels.length > 10) {
+          sampleIndices = [];
+          for (let i = 0; i < labels.length; i += 5) {
+            sampleIndices.push(i);
+          }
+          if (sampleIndices[sampleIndices.length - 1] !== labels.length - 1) {
+            sampleIndices.push(labels.length - 1);
+          }
+          displayLabels = sampleIndices.map(idx => labels[idx]);
         }
-      } else if (viewInterval === 'monthly') {
-        // Sample month ends
-        let lastMonth = '';
-        for (let i = 0; i < filteredDates.length; i++) {
-          const m = filteredDates[i].substring(0, 7);
-          if (m !== lastMonth && i > 0) {
-            sampledDates.push(filteredDates[i - 1]);
-          }
-          lastMonth = m;
-        }
-        sampledDates.push(filteredDates[filteredDates.length - 1]);
-      }
 
-      // Build datasets for selected plans
-      const datasets = [];
-      const selectedList = INVESTMENT_PLANS.filter(p => selectedPlanIds.has(p.id));
+        const formattedLabels = displayLabels.map(d => formatThaiDate(d, viewInterval === 'monthly'));
 
-      selectedList.forEach(plan => {
-        const fullSeries = historicalDataByPlan[plan.id];
-        const dateNavMap = new Map(fullSeries.map(item => [item.date, item.nav]));
-
-        // Calculate values for sampled dates
-        let baseFirstNav = null;
-        const dataPoints = [];
-
-        sampledDates.forEach(d => {
-          const nav = dateNavMap.get(d) ?? null;
-          if (nav !== null && baseFirstNav === null) {
-            baseFirstNav = nav;
+        const datasets = [];
+        selectedList.forEach(plan => {
+          const seriesObj = data.series.find(s => s.plan_name === plan.name);
+          let points = [];
+          if (seriesObj && seriesObj.points) {
+            if (sampleIndices) {
+              points = sampleIndices.map(idx => {
+                const pt = seriesObj.points[idx];
+                return pt ? pt.value : null;
+              });
+            } else {
+              points = seriesObj.points.map(pt => pt.value);
+            }
           }
 
-          if (nav === null) {
-            dataPoints.push(null);
-          } else if (comparisonType === 'base100') {
-            // (navCurrent / navFirst) * 100
-            const indexedVal = baseFirstNav > 0 ? (nav / baseFirstNav) * 100 : 100;
-            dataPoints.push(parseFloat(indexedVal.toFixed(2)));
-          } else {
-            // Real value
-            dataPoints.push(nav);
-          }
+          datasets.push({
+            label: plan.name,
+            data: points,
+            borderColor: plan.color,
+            backgroundColor: plan.color,
+            borderWidth: 2.2,
+            pointRadius: points.length > 70 ? 0 : 2.5,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: plan.color,
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 2,
+            tension: 0.2,
+            fill: false
+          });
         });
 
-        datasets.push({
-          label: plan.name,
-          data: dataPoints,
-          borderColor: plan.color,
-          backgroundColor: plan.color,
-          borderWidth: 2.2,
-          pointRadius: sampledDates.length > 80 ? 0 : 2.5,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: plan.color,
-          pointHoverBorderColor: '#ffffff',
-          pointHoverBorderWidth: 2,
-          tension: 0.25,
-          fill: false
-        });
-      });
+        const viewThaiMap = { daily: 'รายวัน', weekly: 'รายสัปดาห์', monthly: 'รายเดือน' };
+        const compThaiMap = { real: 'มูลค่าจริง', base100: 'ดัชนีฐาน 100' };
+        summaryText.textContent = `${selectedList.length} แผน · ${formattedLabels.length.toLocaleString('th-TH')} จุด · ${viewThaiMap[viewInterval]} · ${compThaiMap[comparisonType]}`;
 
-      // Update summary text
-      const viewThaiMap = { daily: 'รายวัน', weekly: 'รายสัปดาห์', monthly: 'รายเดือน' };
-      const compThaiMap = { real: 'มูลค่าจริง', base100: 'ดัชนีฐาน 100' };
-      summaryText.textContent = `${selectedList.length} แผน · ${sampledDates.length} จุด · ${viewThaiMap[viewInterval]} · ${compThaiMap[comparisonType]}`;
+        const yAxisTitle = comparisonType === 'base100' 
+          ? 'ดัชนี (ฐาน 100)' 
+          : 'มูลค่าต่อหน่วย (บาท)';
 
-      // X-Axis Thai labels
-      const labels = sampledDates.map(d => formatThaiDate(d));
-
-      const yAxisTitle = comparisonType === 'base100' 
-        ? 'ดัชนี (ฐาน 100)' 
-        : 'มูลค่าต่อหน่วย (บาท)';
-
-      // If chart exists, update; else create new
-      if (chartInstance) {
-        chartInstance.data.labels = labels;
-        chartInstance.data.datasets = datasets;
-        chartInstance.options.scales.y.title.text = yAxisTitle;
-        chartInstance.options.scales.y.ticks.callback = function(value) {
-          return comparisonType === 'base100' ? value.toFixed(1) : value.toFixed(2);
-        };
-        chartInstance.update('none');
-      } else {
-        const ctx = canvas.getContext('2d');
-        chartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: datasets
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-              mode: 'index',
-              intersect: false
+        if (chartInstance) {
+          chartInstance.data.labels = formattedLabels;
+          chartInstance.data.datasets = datasets;
+          chartInstance.options.scales.y.title.text = yAxisTitle;
+          chartInstance.options.scales.y.ticks.callback = function(value) {
+            return comparisonType === 'base100' ? value.toFixed(1) : value.toFixed(2);
+          };
+          chartInstance.update();
+        } else {
+          const ctx = canvas.getContext('2d');
+          chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: formattedLabels,
+              datasets: datasets
             },
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  usePointStyle: true,
-                  pointStyle: 'circle',
-                  boxWidth: 8,
-                  padding: 16,
-                  font: {
-                    family: "'Noto Sans Thai', sans-serif",
-                    size: 12.5,
-                    weight: '500'
-                  },
-                  color: '#334155'
-                }
+            plugins: [ athChartBadgePlugin ],
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              interaction: {
+                mode: 'index',
+                intersect: false
               },
-              tooltip: {
-                backgroundColor: 'rgba(15, 23, 42, 0.92)',
-                titleFont: {
-                  family: "'Noto Sans Thai', sans-serif",
-                  size: 13,
-                  weight: '600'
-                },
-                bodyFont: {
-                  family: "'Noto Sans Thai', sans-serif",
-                  size: 12.5
-                },
-                padding: 12,
-                cornerRadius: 8,
-                boxPadding: 6,
-                usePointStyle: true,
-                callbacks: {
-                  label: function(context) {
-                    const label = context.dataset.label || '';
-                    const val = context.parsed.y;
-                    if (val === null) return `${label}: -`;
-                    if (comparisonType === 'base100') {
-                      return `${label}: ${val.toFixed(2)} จุด`;
-                    }
-                    return `${label}: ${val.toFixed(4)} บาท`;
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    boxWidth: 8,
+                    padding: 14,
+                    font: {
+                      family: "'Noto Sans Thai', sans-serif",
+                      size: 12,
+                      weight: '500'
+                    },
+                    color: '#334155'
                   }
-                }
-              }
-            },
-            scales: {
-              x: {
-                grid: {
-                  display: false
                 },
-                ticks: {
-                  font: {
+                tooltip: {
+                  backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                  titleFont: {
                     family: "'Noto Sans Thai', sans-serif",
-                    size: 11
-                  },
-                  color: '#64748b',
-                  maxTicksLimit: 10,
-                  maxRotation: 0
-                }
-              },
-              y: {
-                position: 'left',
-                grid: {
-                  color: '#f1f5f9'
-                },
-                title: {
-                  display: true,
-                  text: yAxisTitle,
-                  font: {
-                    family: "'Noto Sans Thai', sans-serif",
-                    size: 12,
+                    size: 13,
                     weight: '600'
                   },
-                  color: '#475569',
-                  padding: { bottom: 8 }
-                },
-                ticks: {
-                  font: {
+                  bodyFont: {
                     family: "'Noto Sans Thai', sans-serif",
-                    size: 11
+                    size: 12.5
                   },
-                  color: '#64748b',
-                  callback: function(value) {
-                    return comparisonType === 'base100' ? value.toFixed(1) : value.toFixed(2);
+                  padding: 12,
+                  cornerRadius: 8,
+                  boxPadding: 6,
+                  usePointStyle: true,
+                  callbacks: {
+                    label: function(context) {
+                      const label = context.dataset.label || '';
+                      const val = context.parsed.y;
+                      if (val === null || val === undefined) return `${label}: -`;
+
+                      const stat = realPlanStats[label];
+                      const isPlanAth = stat && (Boolean(stat.is_ath) || (stat.latest_nav && stat.max_nav && Math.abs(Number(stat.latest_nav) - Number(stat.max_nav)) < 0.0001));
+
+                      let isPeak = false;
+                      const seriesData = context.dataset.data;
+                      if (seriesData && seriesData.length > 0) {
+                        const validVals = seriesData.filter(v => v !== null && v !== undefined);
+                        if (validVals.length > 0) {
+                          const maxVal = Math.max(...validVals);
+                          if (Math.abs(val - maxVal) < 0.0001) isPeak = true;
+                        }
+                      }
+
+                      const athTag = (isPlanAth && isPeak) ? '  👑 ATH' : '';
+                      if (comparisonType === 'base100') {
+                        return `${label}: ${val.toFixed(2)} จุด${athTag}`;
+                      }
+                      return `${label}: ${val.toFixed(4)} บาท${athTag}`;
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: {
+                    font: { family: "'Noto Sans Thai', sans-serif", size: 11 },
+                    color: '#64748b',
+                    maxTicksLimit: 9,
+                    maxRotation: 0
+                  }
+                },
+                y: {
+                  position: 'left',
+                  grid: { color: '#f1f5f9' },
+                  title: {
+                    display: true,
+                    text: yAxisTitle,
+                    font: { family: "'Noto Sans Thai', sans-serif", size: 12, weight: '600' },
+                    color: '#475569',
+                    padding: { bottom: 8 }
+                  },
+                  ticks: {
+                    font: { family: "'Noto Sans Thai', sans-serif", size: 11 },
+                    color: '#64748b',
+                    callback: function(value) {
+                      return comparisonType === 'base100' ? value.toFixed(1) : value.toFixed(2);
+                    }
                   }
                 }
               }
             }
-          }
-        });
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching chart data:', err);
+        summaryText.textContent = 'เกิดข้อผิดพลาดในการโหลดกราฟ (ลองกดรีเฟรช)';
       }
     }
 
@@ -1498,7 +1757,7 @@
     }
 
     /**
-     * Initialize Date Inputs with defaults (1 year ago to today)
+     * Initialize Date Inputs (1 year ago to today)
      */
     function initDateInputs() {
       const today = new Date();
@@ -1513,20 +1772,23 @@
       startInput.value = toDateInputStr(oneYearAgo);
       endInput.value = toDateInputStr(today);
 
-      // Constraints
-      startInput.max = toDateInputStr(today);
-      endInput.max = toDateInputStr(today);
+      startInput.addEventListener('change', () => {
+        startInput.dataset.userEdited = 'true';
+      });
+      endInput.addEventListener('change', () => {
+        endInput.dataset.userEdited = 'true';
+      });
     }
 
     /**
      * Bind UI event listeners
      */
     function initEventListeners() {
-      // "เลือกทั้งหมด" button: select up to max 5
+      // "เลือก 5 แผนแรก" button: select up to max 5
       document.getElementById('btnSelectAll').addEventListener('click', () => {
         selectedPlanIds.clear();
         INVESTMENT_PLANS.slice(0, 5).forEach(p => selectedPlanIds.add(p.id));
-        showToast('เลือก 5 แผนแรก เนื่องจากจำกัดการเปรียบเทียบสูงสุด 5 แผน', false);
+        showToast('เลือก 5 แผนแรกตามข้อจำกัดการเปรียบเทียบสูงสุด 5 แผน');
         updateSelectionCountUI();
         refreshActivePillClasses();
         renderSummaryTable();
@@ -1548,29 +1810,60 @@
         showToast('อัปเดตข้อมูลกราฟเรียบร้อยแล้ว');
       });
 
+      // "รีเฟรชข้อมูลจริง" button
+      document.getElementById('btnRefreshData').addEventListener('click', async () => {
+        showToast('กำลังรีเฟรชข้อมูลจริงจาก กบข....');
+        await loadAllPlansSummary();
+        await updateChart();
+        showToast('อัปเดตข้อมูลจริงล่าสุดเรียบร้อยแล้ว');
+      });
+
       // Dynamic update when changing dropdowns or dates
       document.getElementById('viewInterval').addEventListener('change', updateChart);
       document.getElementById('comparisonType').addEventListener('change', updateChart);
       document.getElementById('startDate').addEventListener('change', updateChart);
       document.getElementById('endDate').addEventListener('change', updateChart);
 
-      // Account button toast simulation
+      // Account button toast
       document.getElementById('btnAccount').addEventListener('click', () => {
-        showToast('เข้าสู่ระบบในชื่อ: นักลงทุนตัวอย่าง (Demo Account)');
+        showToast('เข้าสู่ระบบในชื่อ: สมาชิก กบข.');
       });
+
+      // Toggle layout between Stacked (full-width) and Side-by-Side
+      const btnToggleLayout = document.getElementById('btnToggleLayout');
+      if (btnToggleLayout) {
+        btnToggleLayout.addEventListener('click', () => {
+          const grid = document.getElementById('dashboardGrid');
+          const toggleText = document.getElementById('layoutToggleText');
+          if (grid) {
+            grid.classList.toggle('side-by-side');
+            const isSideBySide = grid.classList.contains('side-by-side');
+            if (toggleText) {
+              toggleText.textContent = isSideBySide ? 'สลับเป็นมุมมองเต็มจอ' : 'สลับเป็นมุมมองคู่ขนาน';
+            }
+            if (chartInstance) {
+              setTimeout(() => chartInstance.resize(), 50);
+            }
+          }
+        });
+      }
     }
 
     /**
      * App Bootstrap on DOM Ready
      */
-    window.addEventListener('DOMContentLoaded', () => {
-      generateHistoricalData();
+    window.addEventListener('DOMContentLoaded', async () => {
       initDateInputs();
       renderPlanSelector();
       initTableSorting();
       renderSummaryTable();
       initEventListeners();
-      updateChart();
+      
+      // Load real summary data for all 16 plans and chart data in parallel
+      await Promise.all([
+        loadAllPlansSummary(),
+        updateChart()
+      ]);
     });
   </script>
 </body>
