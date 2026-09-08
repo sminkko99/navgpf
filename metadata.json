@@ -1,6 +1,6 @@
 {
   "name": "Investment NAV Dashboard",
-  "description": "หน้า Dashboard สำหรับเลือกและเปรียบเทียบมูลค่าหน่วยลงทุน (NAV) หลายแผน",
+  "description": "หน้า Dashboard สำหรับเปรียบเทียบมูลค่าหน่วยลงทุน (NAV) และคำนวณติดตามพอร์ต กบข. ของฉันตามราคาจริง",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
